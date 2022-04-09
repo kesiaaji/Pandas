@@ -1,0 +1,87 @@
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+#  Read Salaries.csv as a dataframe called salary
+salary = pd.read_csv('Salaries.csv')
+
+# Clean the data of all the null values first
+salary.dropna(axis=1)
+
+
+
+# Q1. Check the total salary cost per year and see how it has increased over years
+
+year = salary.groupby('Year').sum()['TotalPayBenefits']
+print (year)
+
+
+
+# Q2.Compute how much total salary cost has increased from year 2011 to 2014.
+# Check the mean salary cost per year and see how it has increased per year
+
+years = salary.groupby(["Year"]).agg("sum").filter(["Year", "TotalPay"])
+print (years)
+
+
+total_pay_2011 = years.query("Year == 2011")["TotalPay"]
+total_pay_2014 = years.query("Year == 2014")["TotalPay"]
+
+total_change = float(total_pay_2014) - float(total_pay_2011)
+print("\nTotal change from 2011 to 2014 is " + str(total_change_2011_2014))
+
+
+
+# Q3.Which Job Title in Year 2014 has highest mean salary?
+
+job2014 = salary[salary['Year']==2014]
+jobtitle = job2014.groupby('JobTitle').mean()['TotalPayBenefits']
+jobtitle_high_salary = jobtitle.sort_values(ascending=False).head(5)
+print (jobtitle_high_salary)
+print ("\n","The job title in year 2014 with the highest mean salary is",jobtitle_high_salary.index[0])
+
+
+# Q4.How much money could have been saved in Year 2014 by stopping OverTimePay
+
+salary.loc[salary['Year'] == 2014 , 'OvertimePay'].sum()
+
+
+# Q5.Which are the top 5 common job in Year 2014 and how much do they cost the city ?
+
+employee_2014 = salary[salary['Year']==2014]
+profile = employee_2014['JobTitle'].value_counts()
+top_5 = profile.head(5)
+print (top_5)
+
+
+# Q6. Who was the top earning employee across all the years
+
+top_earning = salary.groupby('EmployeeName').sum()['TotalPayBenefits']
+print (top_earning.sort_values(ascending=False))
+
+# Q7. Top 5 jobs in which there are majority of the people
+
+profile = salary['JobTitle'].value_counts()
+top_5 = profile.head(5)
+print (top_5)
+
+# Q8. Total number of job titles which contain Captain
+
+boolean_findings = salary['JobTitle'].str.contains('Captain')
+total_occurence = boolean_findings.sum()
+print(total_occurence)
+
+
+# Q9. Find Average BasePay of Employees Having Job Title ACCOUNTANT
+
+accountant =  salary[salary['JobTitle']=='ACCOUNTANT']
+basepay_avg = accountant['BasePay'].sum()
+print(basepay_avg)
+
+
+# 10. Plot the scatter plot displaying : Total Pay Benefits vs Total Pay
+
+
+x = salary['TotalPayBenefits']
+y = salary['TotalPay']
+plt.scatter(x, y) 
